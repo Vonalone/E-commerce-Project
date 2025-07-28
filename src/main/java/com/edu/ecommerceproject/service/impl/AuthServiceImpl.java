@@ -5,9 +5,12 @@ import com.edu.ecommerceproject.dto.request.SessionDTO;
 import com.edu.ecommerceproject.exception.CustomerException;
 import com.edu.ecommerceproject.exception.CustomerNotFoundException;
 import com.edu.ecommerceproject.exception.LoginException;
+import com.edu.ecommerceproject.exception.SellerException;
 import com.edu.ecommerceproject.models.entities.Customer;
+import com.edu.ecommerceproject.models.entities.Seller;
 import com.edu.ecommerceproject.models.entities.Session;
 import com.edu.ecommerceproject.repository.CustomerRepository;
+import com.edu.ecommerceproject.repository.SellerRepository;
 import com.edu.ecommerceproject.repository.SessionRepository;
 import com.edu.ecommerceproject.service.IAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +24,13 @@ import java.util.UUID;
 public class AuthServiceImpl implements IAuthService {
     private final CustomerRepository customerRepository;
     private final SessionRepository sessionRepository;
+    private final SellerRepository sellerRepository;
 
     @Autowired
-    public AuthServiceImpl(CustomerRepository customerRepository,SessionRepository sessionRepository){
+    public AuthServiceImpl(CustomerRepository customerRepository,SessionRepository sessionRepository,SellerRepository sellerRepository){
         this.customerRepository = customerRepository;
         this.sessionRepository = sessionRepository;
+        this.sellerRepository = sellerRepository;
     }
 
 
@@ -92,5 +97,14 @@ public class AuthServiceImpl implements IAuthService {
         responseSession.setMessage("Logout successful");
         responseSession.setToken(sessionDTO.getToken());
         return responseSession;
+    }
+
+    // handle seller login system
+    @Override
+    public Seller registerSeller(Seller seller) {
+        Optional<Seller> sellerRes = sellerRepository.findSellerByEmail(seller.getEmail());
+        if(sellerRes.isPresent())
+            throw new SellerException("Seller already exists ,please try to login  with your email");
+        return sellerRepository.save(seller);
     }
 }
