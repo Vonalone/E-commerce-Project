@@ -1,11 +1,9 @@
 package com.edu.ecommerceproject.service.impl;
 
 import com.edu.ecommerceproject.dto.request.CustomerDTO;
+import com.edu.ecommerceproject.dto.request.SellerDTO;
 import com.edu.ecommerceproject.dto.request.SessionDTO;
-import com.edu.ecommerceproject.exception.CustomerException;
-import com.edu.ecommerceproject.exception.CustomerNotFoundException;
-import com.edu.ecommerceproject.exception.LoginException;
-import com.edu.ecommerceproject.exception.SellerException;
+import com.edu.ecommerceproject.exception.*;
 import com.edu.ecommerceproject.models.entities.Customer;
 import com.edu.ecommerceproject.models.entities.Seller;
 import com.edu.ecommerceproject.models.entities.Session;
@@ -106,5 +104,56 @@ public class AuthServiceImpl implements IAuthService {
         if(sellerRes.isPresent())
             throw new SellerException("Seller already exists ,please try to login  with your email");
         return sellerRepository.save(seller);
+    }
+
+    @Override
+    public Session loginSeller(SellerDTO sellerDTO) {
+        Optional<Seller> sellerOptional = sellerRepository.findSellerByEmail(sellerDTO.getEmail());
+        if(sellerOptional.isEmpty())
+            throw new SellerNotFoundException("Seller Not Exist");
+        Seller seller = sellerOptional.get();
+        Optional<Session> sellerSession = sessionRepository.findByUserId(seller.getSellerId());
+        if(sellerSession.isPresent()) {
+            Session userSession = sellerSession.get();
+            if (userSession.getDateEndSession().isBefore(LocalDateTime.now())) {
+                sessionRepository.delete(userSession);
+
+            } else {
+                throw new LoginException("Seller already logged in");
+            }
+        }
+            if(sellerDTO.getPassword().equals(seller.getPassword())){
+                Session newSession = new Session();
+                newSession.setUserId(seller.getSellerId());
+                newSession.setUserType("seller");
+                newSession.setDateStartSession(LocalDateTime.now());
+                newSession.setDateEndSession(LocalDateTime.now().plusHours(1));
+                newSession.setToken("seller_"+UUID.randomUUID().toString().split("-")[0]);
+                return sessionRepository.save(newSession);
+
+            }else{
+                throw new LoginException("Incorrect Password ,Try Again");
+            }
+        }
+
+
+
+
+    @Override
+    public SessionDTO logoutSeller(SessionDTO sessionDTO) {
+        Optional<Session> sessionOptional = sessionRepository.findByToken(sessionDTO.getToken());
+        if(sessionOptional.isEmpty())
+            throw new LoginException("Invalid session token, please login first");
+
+        Session userSession = sessionOptional.get();
+        if(userSession.getDateEndSession().isBefore(LocalDateTime.now())) {
+            sessionRepository.delete(userSession);
+            throw new LoginException("Session is Expired , Please Login Again");
+        }
+        sessionRepository.delete(userSession);
+        SessionDTO sessionDTOResponse = new SessionDTO();
+        sessionDTOResponse.setToken(sessionDTO.getToken());
+        sessionDTOResponse.setMessage("Logout successful");
+        return sessionDTOResponse;
     }
 }
