@@ -1,5 +1,6 @@
 package com.edu.ecommerceproject.controller;
 import com.edu.ecommerceproject.dto.request.CustomerDTO;
+import com.edu.ecommerceproject.dto.request.SellerDTO;
 import com.edu.ecommerceproject.dto.request.SessionDTO;
 import com.edu.ecommerceproject.models.entities.Customer;
 import com.edu.ecommerceproject.models.entities.Seller;
@@ -44,6 +45,15 @@ public class AuthController {
     @PostMapping(value = "/register/seller",consumes = "application/json")
     public ResponseEntity<Seller> registerSeller(@Valid @RequestBody Seller seller){
         return new ResponseEntity<>(authService.registerSeller(seller),HttpStatus.CREATED);
+    }
+    @PostMapping(value = "/login/seller",consumes = "application/json")
+    public ResponseEntity<Session> loginSeller(@Valid @RequestBody SellerDTO sellerDTO){
+        return new ResponseEntity<>(authService.loginSeller(sellerDTO),HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping(value = "/logout/seller",consumes = "application/json")
+    public ResponseEntity<SessionDTO> logoutSeller(@Valid @RequestBody SessionDTO sessionDTO){
+        return new ResponseEntity<>(authService.logoutSeller(sessionDTO),HttpStatus.ACCEPTED);
     }
 
 
