@@ -1,6 +1,7 @@
 package com.edu.ecommerceproject.service;
 
 import com.edu.ecommerceproject.dto.request.CustomerDTO;
+import com.edu.ecommerceproject.dto.request.SellerDTO;
 import com.edu.ecommerceproject.dto.request.SessionDTO;
 import com.edu.ecommerceproject.models.entities.Customer;
 import com.edu.ecommerceproject.models.entities.Seller;
@@ -15,6 +16,7 @@ public interface IAuthService {
 // handle seller login system
 
     Seller registerSeller(Seller seller);
-
+    Session loginSeller(SellerDTO sellerDTO);
+    SessionDTO logoutSeller(SessionDTO sessionDTO);
 
 }
