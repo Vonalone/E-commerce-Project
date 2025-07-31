@@ -156,4 +156,19 @@ public class AuthServiceImpl implements IAuthService {
         sessionDTOResponse.setMessage("Logout successful");
         return sessionDTOResponse;
     }
+
+    @Override
+    public void checkStatusToken(String token) {
+      Optional<Session> session = sessionRepository.findByToken(token);
+      if(session.isEmpty())
+          throw new LoginException("Not Found session , Please log in first");
+
+      Session sessionExist = session.get();
+      if((sessionExist.getDateEndSession().isBefore(LocalDateTime.now()))){
+          sessionRepository.delete(sessionExist);
+          throw new LoginException("Session is Expired,Please log in again");
+      }
+
+    }
+
 }

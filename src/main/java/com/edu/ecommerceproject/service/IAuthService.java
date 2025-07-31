@@ -19,4 +19,7 @@ public interface IAuthService {
     Session loginSeller(SellerDTO sellerDTO);
     SessionDTO logoutSeller(SessionDTO sessionDTO);
 
+// method for check status session token and delete if expired
+   void checkStatusToken(String token);
+
 }
