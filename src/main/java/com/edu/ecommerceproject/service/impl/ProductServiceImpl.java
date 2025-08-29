@@ -1,10 +1,13 @@
 package com.edu.ecommerceproject.service.impl;
 
+import com.edu.ecommerceproject.dto.request.ProductDTO;
 import com.edu.ecommerceproject.exception.LoginException;
 import com.edu.ecommerceproject.exception.ProductNotFoundException;
 import com.edu.ecommerceproject.exception.SellerNotFoundException;
 import com.edu.ecommerceproject.models.entities.Product;
 import com.edu.ecommerceproject.models.entities.Seller;
+import com.edu.ecommerceproject.models.enums.CategoryEnum;
+import com.edu.ecommerceproject.models.enums.ProductStatusEnum;
 import com.edu.ecommerceproject.repository.ProductRepository;
 import com.edu.ecommerceproject.repository.SellerRepository;
 import com.edu.ecommerceproject.service.IProductService;
@@ -70,4 +73,32 @@ public class ProductServiceImpl implements IProductService {
         existingProduct.setCategoryEnum(product.getCategoryEnum());
         return productRepository.save(existingProduct);
     }
+
+    @Override
+    public List<ProductDTO> getAllProductOfSeller(Integer id) {
+        return productRepository.findAllProductOfSeller(id);
+    }
+
+    @Override
+    public List<ProductDTO> getAllProductsOfCategory(CategoryEnum categoryEnum) {
+        return productRepository.findAllProductOfCategory(categoryEnum);
+    }
+
+    @Override
+    public List<ProductDTO> getAllProductsOfStatus(ProductStatusEnum statusEnum) {
+        return productRepository.findAllProductOfStatus(statusEnum);
+    }
+
+    @Override
+    public Product updateProductQuantityById(Integer id, ProductDTO productDTO) {
+        Optional<Product> productOptional =productRepository.findById(id);
+        if(productOptional.isEmpty())
+            throw new ProductNotFoundException("product with this id not found");
+        Product product = productOptional.get();
+        product.setQuantity(product.getQuantity()+productDTO.getQuantity());
+        product.setProductStatusEnum(ProductStatusEnum.AVAILABLE);
+        return productRepository.save(product);
+    }
+
+
 }
