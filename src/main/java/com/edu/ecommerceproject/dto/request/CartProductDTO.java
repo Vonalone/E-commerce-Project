@@ -11,13 +11,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDTO {
+public class CartProductDTO {
+
+    @NotNull
+    private Integer productId;
+
     @NotNull
     @Size(min = 3,max = 30,message = "product name size should be between 3-30")
     private String productName;
-
-    @NotNull
-    private String manufacturer;
 
     @DecimalMin(value = "0.00")
     private Double price;

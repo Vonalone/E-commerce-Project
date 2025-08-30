@@ -46,4 +46,7 @@ public class Customer {
     @Embedded
     private CreditCard creditCard;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Cart cart;
+
 }
