@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -49,4 +50,9 @@ public class Customer {
     @OneToOne(cascade = CascadeType.ALL)
     private Cart cart;
 
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "customer")
+    private List<Order> orderList;
+
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Address> addressList;
 }
