@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +33,13 @@ public class Order {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "customer_id",referencedColumnName= "customerId")
+    @JoinColumn(referencedColumnName= "customerId")
     private Customer customer;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order" ,cascade = CascadeType.ALL,orphanRemoval = true)
     private List<CartItem> cartItemList;
 
     @OneToOne
-    @JoinColumn(name = "address_id",referencedColumnName = "addressId")
+    @JoinColumn(referencedColumnName = "addressId")
     private Address orderAddress;
 }
