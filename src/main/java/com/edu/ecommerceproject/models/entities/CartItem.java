@@ -29,5 +29,9 @@ public class CartItem {
     @JsonIgnoreProperties(value = "cartItems")
     private Cart cart;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     private Integer cartItemQuantity;
 }
